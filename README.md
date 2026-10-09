@@ -4,14 +4,15 @@
 
 # 🤖 Neo AI Bot
 
-**ربات هوش مصنوعی پیشرفته تلگرام؛ سریع، رایگان و بهینه‌سازی‌شده برای Cloudflare Workers**
+**ربات هوش مصنوعی پیشرفته تلگرام؛ پایدار، رایگان و بهینه‌سازی‌شده برای Cloudflare Workers + Upstash Redis**
 
 [![Developer Channel](https://img.shields.io/badge/Telegram-Channel-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/NeoTenet)
 [![Cloudflare Workers](https://img.shields.io/badge/Cloudflare-Workers-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
+[![Upstash Redis](https://img.shields.io/badge/Upstash-Redis-00E599?style=for-the-badge&logo=redis&logoColor=white)](https://upstash.com/)
 [![Telegram Bot API](https://img.shields.io/badge/Telegram-Bot%20API-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://core.telegram.org/bots/api)
 [![License](https://img.shields.io/badge/License-MIT-2ea44f?style=for-the-badge)](LICENSE)
 
-**[پیش‌نمایش](#-پیشنمایش-محیط-ربات-و-پنل) • [ویژگی‌ها](#-ویژگیهای-کلیدی) • [پیش‌نیازها](#-پیشنیازها) • [راه‌اندازی](#-راهنمای-گامبهگام-راهاندازی) • [Secrets](#-تنظیمات-و-کلیدهای-امنیتی-secrets) • [Webhook](#-تنظیم-webhook) • [عیبیابی](#-عیبیابی-و-نکات-مهم) • [سازنده](#-سازنده-و-کانال-توسعهدهنده)**
+**[پیش‌نمایش](#-پیشنمایش-محیط-ربات-و-پنل) • [ویژگی‌ها](#-ویژگیهای-کلیدی) • [معماری پروژه](#-معماری-پردازش-و-دیتابیس) • [پیش‌نیازها](#-پیشنیازها) • [راه‌اندازی](#-راهنمای-گامبهگام-راهاندازی) • [Secrets](#-تنظیمات-و-کلیدهای-امنیتی-secrets) • [Webhook](#-تنظیم-webhook) • [عیبیابی](#-عیبیابی-و-نکات-مهم) • [سازنده](#-سازنده-و-کانال-توسعهدهنده)**
 
 </div>
 
@@ -21,13 +22,13 @@
 
 ## 📖 درباره پروژه
 
-**Neo AI Bot** یک ربات هوش مصنوعی برای تلگرام است که روی زیرساخت Serverless سرویس **Cloudflare Workers** اجرا می‌شود.
+**Neo AI Bot** یک ربات هوش مصنوعی چندمنظوره برای تلگرام است که روی زیرساخت Serverless سرویس **Cloudflare Workers** به همراه دیتابیس ابری **Upstash Redis REST API** اجرا می‌شود.
 
-این پروژه برای اجرای سبک، سریع و کم‌هزینه طراحی شده و می‌تواند بدون خرید VPS یا سرور اختصاصی اجرا شود. برای نگهداری داده‌های موقت و وضعیت‌های موردنیاز ربات نیز می‌توان از **Cloudflare KV** استفاده کرد.
+این پروژه برای پردازش‌های پس‌زمینه از `ctx.waitUntil` استفاده می‌کند تا درخواست وب‌هوک تلگرام سریع تأیید شود و پردازش‌های طولانی‌تر در پس‌زمینه ادامه پیدا کنند. مدت‌زمان واقعی پردازش به محدودیت‌های فعلی Cloudflare، نحوه اجرای Worker و API سرویس هوش مصنوعی وابسته است؛ بنابراین زمان ۵۵ ثانیه تضمین‌شده نیست.
 
-ساختار پروژه با تمرکز بر پایداری در Free Tier، مدیریت خطا و کاهش مصرف منابع طراحی شده است.
+با استفاده از **Upstash Redis REST API**، تاریخچه گفتگوها، جلسات و تنظیمات موردنیاز ربات در دیتابیس ابری ذخیره می‌شوند. محدودیت‌ها و سهمیه‌های پلن Upstash همچنان اعمال می‌شوند.
 
-> 💡 **هدف پروژه:** راه‌اندازی یک ربات AI تلگرامی سریع و قابل‌استفاده با حداقل زیرساخت و بدون نیاز به سرور اختصاصی.
+> 💡 **هدف پروژه:** راه‌اندازی یک ربات هوش مصنوعی تلگرامی با زیرساخت Serverless، بدون نیاز به VPS اختصاصی.
 
 ---
 
@@ -37,215 +38,129 @@
 
 <img src="panel-screenshot.jpg" alt="Neo AI Bot Panel Preview" width="100%" />
 
-<sub>نمای پنل Cloudflare و محیط پاسخ‌دهی ربات Neo AI Bot</sub>
+<sub>نمای پنل مدیریت، انتخاب مدل‌ها و پاسخ‌دهی ربات Neo AI Bot</sub>
 
 </div>
 
-> 🖼️ برای نمایش تصویر بالا، فایل `panel-screenshot.jpg` را در ریشه Repository قرار دهید.
->
-> 💡 اگر تصویر دیگری دارید، کافی است مقدار `src` را با نام فایل تصویر خودتان جایگزین کنید.
+> برای نمایش تصاویر، فایل‌های `logo.png` و `panel-screenshot.jpg` را در ریشه Repository قرار دهید.
 
 ---
 
 ## ✨ ویژگی‌های کلیدی
 
-- ⚡ **پاسخ‌دهی سریع** — ارتباط مستقیم با API هوش مصنوعی.
-- ☁️ **Serverless** — اجرا روی Cloudflare Workers بدون نیاز به VPS.
-- 💰 **کم‌هزینه و مناسب Free Tier** — مناسب پروژه‌های شخصی و آزمایشی.
-- 🛡️ **مدیریت خطا** — استفاده از ساختارهای `try/catch` برای جلوگیری از Crash شدن Worker.
-- 🗃️ **Cloudflare KV** — امکان نگهداری وضعیت‌ها و داده‌های موقت.
-- ⏳ **Auto-TTL** — امکان انقضای خودکار داده‌های موقت برای کنترل مصرف KV.
-- 🔐 **Secrets** — نگهداری Token و API Keyها در Environment Variables به‌جای قرار دادن مستقیم در سورس.
-- 🌐 **Webhook** — اتصال مستقیم Telegram Bot API به Worker.
-- 📱 **سازگار با Telegram** — قابل استفاده از موبایل، دسکتاپ و Web.
-- 🧩 **قابل توسعه** — ساختار مناسب برای اضافه‌کردن مدل‌ها، دستورات و قابلیت‌های جدید.
+- ⚡ **پاسخ سریع به وب‌هوک** — امکان تأیید سریع درخواست تلگرام و ادامه پردازش در پس‌زمینه با `ctx.waitUntil`، مشروط به پیاده‌سازی کد و محدودیت‌های پلتفرم.
+- 🗃️ **دیتابیس Upstash Redis REST API** — ذخیره تاریخچه چت، جلسات و تنظیمات در Redis از طریق REST API.
+- 🧠 **پشتیبانی از چندین مدل AI** — امکان مدیریت مدل‌های متنی، کدنویسی، Vision و تولید تصویر، در صورت پیکربندی Providerهای سازگار.
+- 💬 **مدیریت تاریخچه و جلسات چت** — ساخت گفتگوی جدید، جابه‌جایی بین گفتگوهای قبلی و ذخیره تاریخچه، مطابق قابلیت‌های پیاده‌سازی‌شده در نسخه پروژه.
+- 🛠️ **پنل مدیریت ادمین** — مدیریت مدل‌ها، کاربران، مسدودسازی و اسپانسرینگ، در صورت فعال بودن این امکانات در کد.
+- 📢 **قفل عضویت کانال اسپانسر** — امکان الزام کاربر به عضویت در کانال‌های مشخص‌شده.
+- 👥 **پشتیبانی از گروه‌ها** — امکان تشخیص Mention و پاسخ در گروه، در صورت فعال بودن این قابلیت.
+- 📄 **تحلیل فایل و سورس‌کد** — امکان ارسال فایل‌هایی مانند `.js`، `.py`، `.json` و `.txt` برای تحلیل، با توجه به محدودیت‌های Provider.
+- 🔐 **مدیریت امن Secrets** — نگهداری Tokenها و کلیدهای API در تنظیمات محیطی Cloudflare، نه در سورس عمومی.
+
+---
+
+## 🏗️ معماری پردازش و دیتابیس
+
+این پروژه از سه بخش اصلی تشکیل می‌شود:
+
+1. **Telegram Bot API:** پیام‌ها را از طریق Webhook به Worker ارسال می‌کند.
+2. **Cloudflare Workers:** درخواست را پردازش می‌کند و در صورت پیاده‌سازی، با `ctx.waitUntil` کارهای پس‌زمینه را ادامه می‌دهد.
+3. **Upstash Redis REST API و AI Provider:** Redis برای داده‌های موردنیاز ربات و سرویس هوش مصنوعی برای تولید پاسخ استفاده می‌شود.
+
+```text
+                 ┌──────────────────┐
+                 │     Telegram     │
+                 │      Bot API     │
+                 └────────┬─────────┘
+                          │
+                   Webhook Request
+                          │
+                          ▼
+                 ┌──────────────────┐
+                 │ Cloudflare       │
+                 │ Worker           │
+                 │ (ctx.waitUntil)  │
+                 └────────┬─────────┘
+                          │
+              ┌───────────┴───────────┐
+              │                       │
+              ▼                       ▼
+      ┌────────────────┐     ┌────────────────┐
+      │ Upstash Redis  │     │ AI Provider    │
+      │ REST API       │     │ API Endpoint   │
+      └────────────────┘     └────────────────┘
+```
+
+> **نکته فنی:** `ctx.waitUntil` به‌تنهایی محدودیت اجرای Worker را حذف نمی‌کند و تضمین نمی‌کند که پردازش دقیقاً ۵۵ ثانیه ادامه یابد. مدت مجاز اجرا و محدودیت‌های CPU/زمان را در مستندات روز Cloudflare بررسی کنید.
 
 ---
 
 ## 🧰 پیش‌نیازها
 
-قبل از راه‌اندازی، موارد زیر را آماده کنید:
-
 | مورد | توضیح |
 |---|---|
 | 🤖 Telegram Bot | دریافت Token از [@BotFather](https://t.me/BotFather) |
-| 🧠 AI API Key | کلید API سرویس هوش مصنوعی مورد استفاده |
-| 👤 Admin ID | شناسه عددی ادمین ربات |
-| ☁️ Cloudflare Account | حساب رایگان Cloudflare |
-| 🗃️ KV Namespace | برای ذخیره‌سازی داده‌های موردنیاز ربات |
+| 🗃️ Upstash Redis | ساخت دیتابیس در [Upstash](https://upstash.com/) و دریافت REST URL و Token |
+| 👤 Admin ID | شناسه عددی ادمین؛ برای نمونه از [@userinfobot](https://t.me/userinfobot) کمک بگیرید |
+| ☁️ Cloudflare Account | حساب Cloudflare برای ساخت Worker |
+| 🧠 AI API | کلید API و Endpoint سرویس هوش مصنوعی مورد استفاده در کد |
 
 ---
 
 ## 🚀 راهنمای گام‌به‌گام راه‌اندازی
 
-### روش اول — راه‌اندازی از طریق Cloudflare Dashboard
+### ۱. ساخت دیتابیس Upstash Redis
 
-این روش برای کاربران عادی و کسانی که نمی‌خواهند با Wrangler کار کنند، ساده‌تر است.
+1. وارد [Upstash.com](https://upstash.com/) شوید و حساب بسازید.
+2. روی **Create Database** کلیک کنید.
+3. نام دیتابیس و منطقه جغرافیایی مناسب را انتخاب کنید.
+4. پس از ساخت دیتابیس، بخش REST API را باز کنید.
+5. این دو مقدار را بردارید و محرمانه نگه دارید:
+   - `UPSTASH_REDIS_REST_URL`
+   - `UPSTASH_REDIS_REST_TOKEN`
 
-### 1️⃣ ساخت KV Namespace
+### ۲. ساخت Cloudflare Worker
 
 1. وارد [Cloudflare Dashboard](https://dash.cloudflare.com/) شوید.
-2. به بخش **Workers & Pages** بروید.
-3. بخش **KV** را باز کنید.
-4. روی **Create a Namespace** کلیک کنید.
-5. نام پیشنهادی زیر را وارد کنید:
+2. به **Workers & Pages** بروید و یک Worker جدید بسازید.
+3. نام دلخواه را انتخاب کرده و Worker را Deploy کنید.
+4. بخش **Edit Code** را باز کنید.
+5. محتوای فایل `worker.js` را جایگزین کد پیش‌فرض کنید.
+6. روی **Save and Deploy** کلیک کنید.
 
-```text
-TG_BOT_KV
-```
+### ۳. تنظیم متغیرهای محیطی (Secrets)
 
-6. Namespace را ایجاد کنید.
+در داشبورد Cloudflare مسیر زیر را باز کنید:
 
----
+`Workers & Pages` → `Your Worker` → `Settings` → `Variables`
 
-### 2️⃣ ساخت Worker
-
-1. وارد **Workers & Pages** شوید.
-2. روی **Create application** کلیک کنید.
-3. گزینه ساخت Worker را انتخاب کنید.
-4. یک نام دلخواه برای Worker انتخاب کنید.
-5. Worker را Deploy کنید.
-6. وارد **Edit code** شوید.
-7. کد پروژه را جایگزین کد پیش‌فرض کنید.
-8. روی **Save and Deploy** بزنید.
-
----
-
-### 3️⃣ اتصال KV به Worker
-
-در Worker خود:
-
-```text
-Settings
-   ↓
-Variables
-   ↓
-KV Namespace Bindings
-   ↓
-Add binding
-```
-
-مقادیر را به این شکل قرار دهید:
-
-| گزینه | مقدار |
-|---|---|
-| Variable name | `DB` |
-| KV Namespace | `TG_BOT_KV` |
-
-سپس **Save and deploy** را بزنید.
-
-> ⚠️ نام Binding باید دقیقاً `DB` باشد، مگر اینکه در سورس پروژه نام دیگری برای KV تعریف شده باشد.
-
----
-
-## 🧑‍💻 روش دوم — راه‌اندازی با Wrangler
-
-برای توسعه‌دهندگان، استفاده از Wrangler سریع‌تر و قابل‌تکرارتر است.
-
-### 1. کلون کردن Repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/Neo-AI-Bot.git
-cd Neo-AI-Bot
-```
-
-### 2. ورود به Cloudflare
-
-```bash
-npx wrangler login
-```
-
-### 3. ساخت KV Namespace
-
-```bash
-npx wrangler kv namespace create "TG_BOT_KV"
-```
-
-### 4. تنظیم Binding
-
-شناسه Namespace ایجادشده را در تنظیمات Wrangler قرار دهید.
-
-نمونه:
-
-```toml
-[[kv_namespaces]]
-binding = "DB"
-id = "YOUR_KV_NAMESPACE_ID"
-```
-
-### 5. Deploy
-
-```bash
-npx wrangler deploy
-```
-
-پس از Deploy، آدرس Worker معمولاً چیزی شبیه این خواهد بود:
-
-```text
-https://YOUR-WORKER-NAME.YOUR-SUBDOMAIN.workers.dev
-```
-
----
-
-## 🔐 تنظیمات و کلیدهای امنیتی (Secrets)
-
-**هیچ‌وقت Token یا API Key را مستقیماً داخل `worker.js`، README یا Repository عمومی قرار ندهید.**
-
-در Cloudflare Worker به مسیر زیر بروید:
-
-```text
-Workers & Pages
-   ↓
-Your Worker
-   ↓
-Settings
-   ↓
-Variables
-   ↓
-Environment Variables
-```
-
-کلیدهای زیر را اضافه کنید:
+متغیرهای زیر را اضافه کنید. نام‌ها باید با نام‌هایی که در کد خوانده می‌شوند دقیقاً مطابقت داشته باشند.
 
 | Variable | توضیحات | نمونه |
 |---|---|---|
-| `BOT_TOKEN` | توکن ربات دریافت‌شده از BotFather | `123456789:ABC...` |
-| `AI_API_KEY` | کلید API سرویس هوش مصنوعی | `AIzaSy...` |
-| `ADMIN_ID` | شناسه عددی ادمین | `123456789` |
+| `BOT_TOKEN` | توکن ربات تلگرام | `123456789:ABC...` |
+| `ADMIN_ID` | شناسه عددی ادمین | `987654321` |
+| `UPSTASH_URL` | آدرس REST دیتابیس Upstash | `https://xxxx-xxxxx.upstash.io` |
+| `UPSTASH_TOKEN` | توکن REST دیتابیس Upstash | `REDACTED...` |
 
-### 🔒 جدول کلیدهای امنیتی
+> در این README از نام‌های `UPSTASH_URL` و `UPSTASH_TOKEN` استفاده شده است. اگر کد شما نام‌های `UPSTASH_REDIS_REST_URL` و `UPSTASH_REDIS_REST_TOKEN` را می‌خواند، همان نام‌های مورد انتظار کد را تنظیم کنید یا کد و README را با هم هماهنگ کنید.
 
-| کلید | سطح حساسیت | محل نگهداری | داخل Git؟ |
-|---|---|---|---|
-| `BOT_TOKEN` | 🔴 بسیار حساس | Cloudflare Secrets | ❌ هرگز |
-| `AI_API_KEY` | 🔴 بسیار حساس | Cloudflare Secrets | ❌ هرگز |
-| `ADMIN_ID` | 🟠 حساس | Environment Variable | ⚠️ ترجیحاً Secret |
-| `DB` | 🟡 Binding | KV Binding | ❌ نیازی به قرار دادن در کد ندارد |
-| `YOUR_WORKER_URL` | 🟢 عمومی | Webhook Config | ✅ مشکلی ندارد |
-
-> 🚨 اگر Token یا API Key به‌صورت عمومی منتشر شد، آن را فوراً در سرویس مربوطه **Revoke/Rotate** کنید و یک کلید جدید بسازید.
+پس از افزودن متغیرها، Worker را ذخیره و Deploy کنید.
 
 ---
 
 ## 🔗 تنظیم Webhook
 
-پس از Deploy شدن Worker و ثبت Secretها، باید Telegram را به Worker متصل کنید.
+پس از Deploy شدن Worker و ثبت متغیرهای محیطی، باید Telegram را به آدرس Worker متصل کنید.
 
-ساختار درخواست:
-
-```text
-https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=<YOUR_WORKER_URL>
-```
-
-### نمونه
+این الگو را در مرورگر باز کنید و مقادیر نمونه را با اطلاعات واقعی خود جایگزین کنید:
 
 ```text
-https://api.telegram.org/bot123456789:YOUR_TOKEN/setWebhook?url=https://neo-ai-bot.example.workers.dev
+https://api.telegram.org/bot<YOUR_BOT_TOKEN>/setWebhook?url=https://<YOUR_WORKER_NAME>.<YOUR_SUBDOMAIN>.workers.dev/
 ```
 
-> ⚠️ در Repository عمومی هرگز نمونه واقعی Token را قرار ندهید.
-
-اگر درخواست موفق باشد، Telegram پاسخی شبیه این برمی‌گرداند:
+در صورت موفقیت، پاسخ تلگرام مشابه این خواهد بود:
 
 ```json
 {
@@ -257,137 +172,78 @@ https://api.telegram.org/bot123456789:YOUR_TOKEN/setWebhook?url=https://neo-ai-b
 
 ### بررسی وضعیت Webhook
 
-برای بررسی Webhook فعلی:
-
 ```text
 https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getWebhookInfo
 ```
 
-نمونه خروجی:
+در خروجی، مقدار `url` و در صورت وجود، `last_error_message` را بررسی کنید.
 
-```json
-{
-  "ok": true,
-  "result": {
-    "url": "https://YOUR-WORKER.workers.dev/",
-    "pending_update_count": 0
-  }
-}
-```
+### حذف Webhook
 
----
-
-## 🧹 حذف Webhook
-
-اگر لازم شد Webhook فعلی را حذف کنید:
+در صورت نیاز به حذف اتصال فعلی:
 
 ```text
 https://api.telegram.org/bot<YOUR_BOT_TOKEN>/deleteWebhook
 ```
 
-سپس می‌توانید Webhook جدید را دوباره تنظیم کنید.
+> 🔐 آدرس‌های بالا حاوی Token ربات هستند. آن‌ها را در Issue، اسکرین‌شات یا پیام عمومی منتشر نکنید.
+
+---
+
+## 🔐 نکات امنیتی
+
+- هیچ‌وقت `BOT_TOKEN` یا `UPSTASH_TOKEN` را در GitHub عمومی قرار ندهید.
+- کلید API هوش مصنوعی را در Cloudflare Secrets نگهداری کنید.
+- دسترسی به تنظیمات Worker را فقط به افراد مورد اعتماد بدهید.
+- اگر Token افشا شد، آن را فوراً تعویض کنید.
+- پیش از انتشار اسکرین‌شات، Tokenها، شناسه‌های حساس و اطلاعات خصوصی را بپوشانید.
+- از قرار دادن اطلاعات واقعی در نمونه‌های README خودداری کنید.
 
 ---
 
 ## 🩺 عیب‌یابی و نکات مهم
 
-### ❌ ربات هیچ پاسخی نمی‌دهد
+### ❌ ربات پس از ارسال پیام پاسخ نمی‌دهد
 
-ابتدا وضعیت Webhook را بررسی کنید:
-
-```text
-https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getWebhookInfo
-```
-
-موارد زیر را بررسی کنید:
-
-- URL مربوط به Worker درست باشد.
-- Worker واقعاً Deploy شده باشد.
-- `BOT_TOKEN` صحیح باشد.
-- Webhook روی همان Worker تنظیم شده باشد.
-- خطای Runtime در Cloudflare وجود نداشته باشد.
-
----
+1. وضعیت Webhook را با `getWebhookInfo` بررسی کنید.
+2. مطمئن شوید URL Worker درست است و Worker با موفقیت Deploy شده.
+3. مقدار `BOT_TOKEN` را بررسی کنید.
+4. لاگ‌های Worker را در داشبورد Cloudflare بازبینی کنید.
+5. مطمئن شوید متغیرهای Upstash با نام مورد انتظار کد ثبت شده‌اند.
 
 ### ❌ خطای `Unauthorized`
 
-معمولاً Token ربات اشتباه است.
+- Token ربات را در [@BotFather](https://t.me/BotFather) بررسی یا تعویض کنید.
+- مقدار `BOT_TOKEN` را در Cloudflare به‌روزرسانی کنید.
+- پس از تغییر تنظیمات، Worker را مجدداً Deploy کنید.
 
-راه‌حل:
+### ❌ خطای Upstash یا Redis
 
-1. وارد [@BotFather](https://t.me/BotFather) شوید.
-2. Token جدید دریافت یا Token فعلی را بررسی کنید.
-3. مقدار `BOT_TOKEN` را در Cloudflare به‌روزرسانی کنید.
-4. Worker را دوباره Deploy کنید.
-
----
+- URL باید آدرس REST معتبر دیتابیس باشد.
+- Token باید متعلق به همان دیتابیس باشد.
+- فضای خالی ابتدا یا انتهای مقادیر را حذف کنید.
+- سهمیه، محدودیت نرخ و وضعیت سرویس Upstash را بررسی کنید.
+- نام متغیرهای Cloudflare را با نام‌های مورد استفاده در کد تطبیق دهید.
 
 ### ❌ خطای API هوش مصنوعی
 
-اگر Telegram پیام را دریافت می‌کند ولی پاسخ AI نمی‌آید:
+- اعتبار `AI_API_KEY` را بررسی کنید.
+- فعال بودن API، سهمیه و محدودیت نرخ سرویس را بررسی کنید.
+- Endpoint و شناسه مدل باید با Provider انتخاب‌شده سازگار باشند.
+- خطاهای `429` و `5xx` را در لاگ‌ها بررسی کنید.
 
-- مقدار `AI_API_KEY` را بررسی کنید.
-- فعال بودن API سرویس موردنظر را بررسی کنید.
-- محدودیت درخواست یا Quota را بررسی کنید.
-- نام مدل و Endpoint را با کد پروژه تطبیق دهید.
+### ❌ خطای محدودیت زمان اجرا
 
----
+`ctx.waitUntil` محدودیت‌های Cloudflare Workers را حذف نمی‌کند. اگر درخواست AI طولانی است:
 
-### ❌ خطای KV یا Binding
+- مدت زمان و محدودیت‌های فعلی Worker را بررسی کنید.
+- از پردازش پس‌زمینه مطابق مستندات پلتفرم استفاده کنید.
+- برای کارهای طولانی، صف یا معماری پردازش مناسب‌تری در نظر بگیرید.
+- مطمئن شوید کار پس‌زمینه در زمان مجاز کامل می‌شود.
 
-اگر خطایی مرتبط با `DB` یا KV مشاهده می‌کنید:
+### ⏳ تایمر وضعیت «در حال فکر کردن...»
 
-```text
-Settings
-   ↓
-Variables
-   ↓
-KV Namespace Bindings
-```
-
-بررسی کنید:
-
-```text
-Variable name = DB
-```
-
-و Namespace صحیح انتخاب شده باشد.
-
----
-
-### ❌ Webhook تنظیم شده اما Update دریافت نمی‌شود
-
-این موارد را بررسی کنید:
-
-```text
-1. Worker deployed?
-2. Webhook URL correct?
-3. BOT_TOKEN correct?
-4. getWebhookInfo چه خطایی نشان می‌دهد؟
-5. Worker Logs چه خطایی ثبت کرده؟
-```
-
-برای تست سریع، ابتدا:
-
-```text
-getWebhookInfo
-```
-
-را اجرا کنید و مقدار `last_error_message` را بررسی کنید.
-
----
-
-### ❌ ربات بعد از مدتی از کار می‌افتد
-
-در Free Tier ممکن است محدودیت‌های سرویس باعث بروز خطا شوند.
-
-پیشنهاد:
-
-- داده‌های موقت را با TTL مدیریت کنید.
-- درخواست‌های غیرضروری KV را کاهش دهید.
-- API Callهای تکراری را کنترل کنید.
-- خطاهای `429` و `5xx` را مدیریت کنید.
-- Logs مربوط به Worker را بررسی کنید.
+اگر رابط ربات پیام وضعیت یا تایمر کوتاه نمایش می‌دهد، مدت آن باید با منطق واقعی کد هماهنگ باشد. پیام وضعیت به‌تنهایی تضمین‌کننده جلوگیری از خطای `429 Too Many Requests` نیست؛ تعداد درخواست‌ها و محدودیت‌های Telegram Bot API را نیز مدیریت کنید.
 
 ---
 
@@ -396,119 +252,32 @@ getWebhookInfo
 ```text
 Neo-AI-Bot/
 ├── worker.js
-├── wrangler.toml
 ├── README.md
 ├── LICENSE
 ├── logo.png
-├── panel-screenshot.jpg
-└── .gitignore
+└── panel-screenshot.jpg
 ```
 
-> فایل‌های `logo.png` و `panel-screenshot.jpg` فقط برای نمایش بهتر README هستند و می‌توانید نام آن‌ها را تغییر دهید.
-
----
-
-## 🛡️ امنیت
-
-برای حفظ امنیت پروژه:
-
-- ❌ `BOT_TOKEN` را در GitHub قرار ندهید.
-- ❌ `AI_API_KEY` را داخل `worker.js` هاردکد نکنید.
-- ❌ Secrets را داخل Screenshot منتشر نکنید.
-- ❌ Token را داخل Issue یا Pull Request قرار ندهید.
-- ✅ از Cloudflare Environment Variables / Secrets استفاده کنید.
-- ✅ در صورت افشای Token، آن را فوراً Rotate کنید.
-- ✅ Repository را قبل از Public کردن برای کلیدهای حساس بررسی کنید.
-
-### نمونه `.gitignore`
-
-```gitignore
-.env
-.env.*
-.dev.vars
-wrangler.local.toml
-secrets.json
-*.secret
-```
-
----
-
-## 📊 معماری ساده پروژه
-
-```text
-                 ┌──────────────────┐
-                 │     Telegram     │
-                 │      Bot API     │
-                 └────────┬─────────┘
-                          │
-                       Webhook
-                          │
-                          ▼
-                 ┌──────────────────┐
-                 │ Cloudflare       │
-                 │ Worker           │
-                 │                  │
-                 │  Neo AI Bot      │
-                 └───────┬──────────┘
-                         │
-              ┌──────────┴──────────┐
-              │                     │
-              ▼                     ▼
-      ┌──────────────┐      ┌──────────────┐
-      │ Cloudflare   │      │   AI API     │
-      │ KV / DB      │      │ Provider     │
-      └──────────────┘      └──────────────┘
-```
-
----
-
-## 🧪 تست سریع بعد از نصب
-
-پس از تنظیم Webhook:
-
-1. وارد ربات شوید.
-2. `/start` را ارسال کنید.
-3. یک پیام آزمایشی ارسال کنید.
-4. پاسخ AI را بررسی کنید.
-5. در صورت عدم پاسخ، `getWebhookInfo` و Worker Logs را بررسی کنید.
-
----
-
-## 📌 نکات مربوط به Cloudflare Free Tier
-
-این پروژه برای استفاده کم‌هزینه و آزمایشی طراحی شده است؛ با این حال، محدودیت‌های Cloudflare و سرویس AI مورد استفاده ممکن است در طول زمان تغییر کنند.
-
-بنابراین:
-
-- محدودیت‌های روزانه را در نظر بگیرید.
-- از Loopهای ناخواسته جلوگیری کنید.
-- KV را بی‌دلیل زیاد صدا نزنید.
-- برای پروژه‌های پرترافیک، محدودیت‌های فعلی سرویس‌ها را بررسی کنید.
-
-> ℹ️ رایگان بودن Worker به معنی رایگان بودن API سرویس هوش مصنوعی متصل‌شده نیست.
+فایل‌های تصویری صرفاً برای نمایش README هستند. نام فایل‌ها را می‌توانید تغییر دهید، اما مسیرهای `src` در README را نیز به‌روزرسانی کنید.
 
 ---
 
 ## 🤝 مشارکت
 
-Pull Request و Issue برای بهبود پروژه استقبال می‌شود.
+برای گزارش مشکل یا پیشنهاد قابلیت جدید، می‌توانید Issue ثبت کنید یا Pull Request بفرستید.
 
-قبل از ارسال Pull Request:
+پیش از ارسال تغییرات:
 
-```text
-✓ کد را تست کنید
-✓ Secret واقعی داخل Commit نباشد
-✓ تغییرات را واضح توضیح دهید
-✓ ساختار اصلی Worker را حفظ کنید
-```
+- [ ] کد را آزمایش کنید.
+- [ ] هیچ Secret واقعی در Commit نباشد.
+- [ ] توضیحات تغییرات را واضح بنویسید.
+- [ ] سازگاری با Cloudflare Workers را بررسی کنید.
 
 ---
 
-## 📜 License
+## 📜 مجوز (License)
 
-این پروژه تحت مجوز **MIT License** منتشر شده است.
-
-برای جزئیات کامل به فایل [`LICENSE`](LICENSE) مراجعه کنید.
+این پروژه تحت مجوز **MIT** منتشر شده است. برای اطلاعات کامل، فایل [`LICENSE`](LICENSE) را ببینید.
 
 ---
 
@@ -516,7 +285,7 @@ Pull Request و Issue برای بهبود پروژه استقبال می‌شو�
 
 این پروژه توسط **NeoTenet** توسعه داده شده است.
 
-برای دریافت پروژه‌ها، آموزش‌ها، آپدیت‌ها و سورس‌کدهای جدید:
+برای دریافت آموزش‌ها، آپدیت‌ها و پروژه‌های جدید:
 
 <div align="center">
 
@@ -524,16 +293,9 @@ Pull Request و Issue برای بهبود پروژه استقبال می‌شو�
 
 **📢 کانال توسعه‌دهنده:** [t.me/NeoTenet](https://t.me/NeoTenet)
 
-</div>
-
----
-
-<div align="center">
-
-### ⭐ اگر پروژه برای شما مفید بود، یک Star به Repository بدهید!
+### ⭐ اگر پروژه برایتان مفید بود، به Repository ستاره بدهید!
 
 **Made with ❤️ by NeoTenet**
 
 </div>
-
 </div>
